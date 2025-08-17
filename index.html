@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sygn Language — Every sign speaks differently</title>
+  <meta name="description" content="Sygn Language — Zodiac × Relationships. Be first to try the app." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+  <!-- Tailwind Play CDN (good for a fast start) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Inter', 'ui-sans-serif', 'system-ui'] },
+          colors: {
+            void: '#1A1A1A',
+            neonBlue: '#3A86FF',
+            neonPink: '#FF006E',
+            galaxyPurple: '#8338EC'
+          },
+          dropShadow: {
+            neon: '0 0 25px rgba(58,134,255,0.55)',
+            pink: '0 0 25px rgba(255,0,110,0.55)',
+            purple: '0 0 25px rgba(131,56,236,0.55)'
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    /* Subtle animated starfield */
+    .starfield::before, .starfield::after {
+      content: "";
+      position: absolute; inset: 0; pointer-events: none;
+      background-image:
+        radial-gradient(2px 2px at 20% 30%, rgba(255,255,255,0.7) 50%, transparent 51%),
+        radial-gradient(1.5px 1.5px at 70% 60%, rgba(255,255,255,0.5) 50%, transparent 51%),
+        radial-gradient(1.5px 1.5px at 40% 80%, rgba(255,255,255,0.4) 50%, transparent 51%),
+        radial-gradient(1.5px 1.5px at 85% 25%, rgba(255,255,255,0.6) 50%, transparent 51%);
+      background-repeat: no-repeat;
+      animation: twinkle 6s ease-in-out infinite;
+      opacity: .6;
+    }
+    .starfield::after {
+      filter: blur(1px);
+      animation-duration: 9s;
+      opacity: .35;
+    }
+    @keyframes twinkle {
+      0%, 100% { opacity: .35; }
+      50%      { opacity: .75; }
+    }
+
+    /* Neon button hover glow */
+    .neon-btn { transition: all .2s ease; }
+    .neon-btn:hover { transform: translateY(-1px); box-shadow: 0 0 35px rgba(58,134,255,.45); }
+  </style>
+</head>
+<body class="bg-void text-white font-sans min-h-screen relative overflow-hidden">
+  <!-- Gradient halos -->
+  <div class="pointer-events-none absolute -top-40 -left-40 h-96 w-96 rounded-full blur-3xl" style="background: radial-gradient(50% 50% at 50% 50%, rgba(58,134,255,.25), transparent 60%)"></div>
+  <div class="pointer-events-none absolute -bottom-40 -right-40 h-[28rem] w-[28rem] rounded-full blur-3xl" style="background: radial-gradient(50% 50% at 50% 50%, rgba(255,0,110,.20), transparent 60%)"></div>
+
+  <main class="relative starfield">
+    <section class="max-w-5xl mx-auto px-6 pt-20 pb-16 text-center">
+      <!-- Logo / Wordmark -->
+      <div class="inline-flex items-center gap-3">
+        <!-- Logo placeholder: swap src with your exported symbol-only logo (SVG/PNG) -->
+        <div class="h-12 w-12 rounded-full bg-gradient-to-tr from-neonPink via-galaxyPurple to-neonBlue flex items-center justify-center drop-shadow-neon">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 3a9 9 0 100 18 9 9 0 000-18Z" stroke="#fff" stroke-width="1.2" opacity=".35"/>
+            <path d="M4 12h16M12 4v16" stroke="#fff" stroke-width="1.2" opacity=".35"/>
+            <circle cx="12" cy="12" r="2.2" fill="#fff"/>
+          </svg>
+        </div>
+        <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight drop-shadow-neon">Sygn Language</h1>
+      </div>
+      <p class="mt-3 text-lg/7 text-white/80">Every sign speaks differently.</p>
+
+      <!-- Hero copy -->
+      <h2 class="mt-10 text-4xl md:text-6xl font-extrabold tracking-tight">
+        Zodiac × Relationships<span class="text-transparent bg-clip-text bg-gradient-to-r from-neonBlue via-galaxyPurple to-neonPink">, decoded</span>
+      </h2>
+      <p class="mt-4 text-white/70 max-w-2xl mx-auto">Compatibility, communication tips, and daily vibes — designed for how <em>your</em> sign (and theirs) actually speaks.</p>
+
+      <!-- Email signup (Formspree placeholder) -->
+      <form id="waitlist" class="mt-10 max-w-md mx-auto flex gap-2" action="https://formspree.io/f/your-form-id" method="POST">
+        <label for="email" class="sr-only">Email</label>
+        <input id="email" name="email" type="email" required placeholder="Enter your email"
+               class="w-full rounded-xl bg-white/5 border border-white/10 px-4 py-3 outline-none focus:border-neonBlue/70" />
+        <button class="neon-btn rounded-xl px-5 py-3 font-semibold bg-neonBlue text-black">Notify me</button>
+      </form>
+      <p class="mt-2 text-xs text-white/50">No spam. Unsubscribe anytime.</p>
+
+      <!-- Socials -->
+      <div class="mt-8 flex items-center justify-center gap-5 text-white/70">
+        <a href="#" aria-label="TikTok" class="hover:text-white">TikTok</a>
+        <span class="text-white/30">•</span>
+        <a href="#" aria-label="Instagram" class="hover:text-white">Instagram</a>
+        <span class="text-white/30">•</span>
+        <a href="#" aria-label="X (Twitter)" class="hover:text-white">X</a>
+        <span class="text-white/30">•</span>
+        <a href="#" aria-label="YouTube" class="hover:text-white">YouTube</a>
+      </div>
+
+      <!-- Teasers -->
+      <div class="mt-14 grid md:grid-cols-3 gap-4 max-w-4xl mx-auto">
+        <div class="rounded-2xl border border-white/10 bg-white/5 p-5 text-left">
+          <p class="text-sm text-white/60">Feature Sneak Peek</p>
+          <h3 class="mt-1 font-semibold">Daily Compatibility</h3>
+          <p class="mt-1 text-sm text-white/70">Get nuanced tips for you + their sign. No copy‑paste horoscopes.</p>
+        </div>
+        <div class="rounded-2xl border border-white/10 bg-white/5 p-5 text-left">
+          <p class="text-sm text-white/60">Feature Sneak Peek</p>
+          <h3 class="mt-1 font-semibold">How They Text</h3>
+          <p class="mt-1 text-sm text-white/70">Decoded texting styles for each pairing. Less guessing, fewer fights.</p>
+        </div>
+        <div class="rounded-2xl border border-white/10 bg-white/5 p-5 text-left">
+          <p class="text-sm text-white/60">Feature Sneak Peek</p>
+          <h3 class="mt-1 font-semibold">Icebreakers</h3>
+          <p class="mt-1 text-sm text-white/70">Openers and prompts tailored to your dynamic.</p>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <p class="mt-16 text-xs text-white/40">© <span id="year"></span> Sygn Language. All rights reserved.</p>
+    </section>
+  </main>
+
+  <script>
+    // Year
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Basic success UX for Formspree (no backend needed)
+    const form = document.getElementById('waitlist');
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = form.querySelector('button');
+      btn.disabled = true; btn.textContent = 'Sending…';
+      try {
+        const res = await fetch(form.action, { method: 'POST', body: new FormData(form), headers: { 'Accept': 'application/json' } });
+        if (res.ok) {
+          form.innerHTML = '<div class="mx-auto text-center text-sm p-4 rounded-xl bg-white/5 border border-white/10">✅ You\'re on the list! We\'ll email you when the beta opens.</div>';
+        } else { btn.disabled = false; btn.textContent = 'Notify me'; alert('Something went wrong. Try again.'); }
+      } catch(err) { btn.disabled = false; btn.textContent = 'Notify me'; alert('Network error. Try again.'); }
+    });
+  </script>
+</body>
+</html>
