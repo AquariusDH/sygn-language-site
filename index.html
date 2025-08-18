@@ -46,7 +46,7 @@
         radial-gradient(1.5px 1.5px at 40% 80%, rgba(255,255,255,0.4) 50%, transparent 51%),
         radial-gradient(1.5px 1.5px at 85% 25%, rgba(255,255,255,0.6) 50%, transparent 51%);
       background-repeat: no-repeat;
-      animation: twinkle 6s ease-in-out infinite; opacity: .45; /* toned down a bit */
+      animation: twinkle 6s ease-in-out infinite; opacity: .45;
     }
     .starfield::after { filter: blur(1px); animation-duration: 9s; opacity: .28; }
     @keyframes twinkle { 0%,100%{opacity:.3} 50%{opacity:.75} }
@@ -63,10 +63,7 @@
       filter: blur(40px) saturate(120%);
       animation: nebulaMove 24s ease-in-out infinite alternate;
     }
-    @keyframes nebulaMove {
-      0%   { transform: translate3d(0,0,0) scale(1); }
-      100% { transform: translate3d(-1.5%, -2%, 0) scale(1.04); }
-    }
+    @keyframes nebulaMove { 0% { transform: translate3d(0,0,0) scale(1);} 100% { transform: translate3d(-1.5%, -2%, 0) scale(1.04);} }
 
     /* Aurora waves container */
     #aurora { position: absolute; inset: 0; overflow: hidden; }
@@ -107,14 +104,8 @@
       animation: auroraSlideB 34s linear infinite reverse;
     }
 
-    @keyframes auroraSlideA {
-      0%   { transform: translateX(0)   rotate(-4deg); }
-      100% { transform: translateX(-12%) rotate(-4deg); }
-    }
-    @keyframes auroraSlideB {
-      0%   { transform: translateX(-8%) rotate(3deg); }
-      100% { transform: translateX(6%)  rotate(3deg); }
-    }
+    @keyframes auroraSlideA { 0% { transform: translateX(0) rotate(-4deg);} 100% { transform: translateX(-12%) rotate(-4deg);} }
+    @keyframes auroraSlideB { 0% { transform: translateX(-8%) rotate(3deg);} 100% { transform: translateX(6%) rotate(3deg);} }
   </style>
 </head>
 <body class="bg-void text-white font-sans min-h-screen relative overflow-x-hidden">
@@ -136,7 +127,6 @@
   <div class="pointer-events-none absolute -bottom-40 -right-40 h-[28rem] w-[28rem] rounded-full blur-3xl" style="background: radial-gradient(50% 50% at 50% 50%, rgba(255,0,110,.20), transparent 60%)"></div>
 
   <main class="relative starfield">
-
     <!-- Mystic background (fixed behind everything) -->
     <div class="pointer-events-none fixed inset-0 -z-10">
       <div id="nebula" class="absolute inset-0"></div>
@@ -147,15 +137,8 @@
     </div>
 
     <section class="max-w-5xl mx-auto px-6 pt-20 pb-16 text-center">
-      <!-- Logo / Wordmark -->
+      <!-- Wordmark ONLY (logo icon removed) -->
       <div class="inline-flex items-center gap-3">
-        <div class="h-12 w-12 rounded-full bg-gradient-to-tr from-neonPink via-galaxyPurple to-neonBlue flex items-center justify-center drop-shadow-neon">
-          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-            <path d="M12 3a9 9 0 100 18 9 9 0 000-18Z" stroke="#fff" stroke-width="1.2" opacity=".35"/>
-            <path d="M4 12h16M12 4v16" stroke="#fff" stroke-width="1.2" opacity=".35"/>
-            <circle cx="12" cy="12" r="2.2" fill="#fff"/>
-          </svg>
-        </div>
         <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight drop-shadow-neon">Sygn Language</h1>
       </div>
       <p class="mt-3 text-lg/7 text-white/80">Every sign speaks differently.</p>
