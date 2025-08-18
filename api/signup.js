@@ -7,25 +7,28 @@ export default async function handler(req, res) {
 
   try {
     const { email, reward } = req.body || {};
+    // Correct email regex (your previous one had bracket/escape issues)
     if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       return res.status(400).json({ ok: false, error: 'Invalid email' });
     }
 
     const API_KEY = process.env.RESEND_API_KEY;
     const FROM = process.env.FROM_EMAIL || 'Sygn Language <hello@sygnlanguage.com>';
+    if (!API_KEY) {
+      return res.status(500).json({ ok: false, error: 'Missing RESEND_API_KEY' });
+    }
 
     // pick subject/html by reward
     const subjects = {
-      report: "✨ Your Mini Zodiac Report",
-      icebreakers: "🎲 Your Icebreaker Pack",
-      memes: "😂 Your Toxic Meme Drop",
+      report: '✨ Your Mini Zodiac Report',
+      icebreakers: '🎲 Your Icebreaker Pack',
+      memes: '😂 Your Toxic Meme Drop'
     };
 
     const bodies = {
       report: `
         <h1 style="margin:0 0 12px">Your Mini Zodiac Report ✨</h1>
-        <p>Welcome to Sygn Language. Here’s a tiny cosmic snapshot to keep:
-        </p>
+        <p>Welcome to Sygn Language. Here’s a tiny cosmic snapshot to keep:</p>
         <ul>
           <li><b>Strength today:</b> honest connection</li>
           <li><b>Watch-out:</b> overthinking replies</li>
@@ -36,9 +39,9 @@ export default async function handler(req, res) {
       icebreakers: `
         <h1 style="margin:0 0 12px">3 Icebreakers for Tonight 🎲</h1>
         <ol>
-          <li>“Playful: Rate my vibe today 1–10. Be honest 👀”</li>
-          <li>“Deep: What’s one thing you wish I understood better about you?”</li>
-          <li>“Plan: Pick one — night drive + music or noodles + arcade?”</li>
+          <li>Playful: Rate my vibe today 1–10. Be honest 👀</li>
+          <li>Deep: What’s one thing you wish I understood better about you?</li>
+          <li>Plan: Pick one — night drive + music or noodles + arcade?</li>
         </ol>
         <p>Reply if you want a set tailored to your pairing. We’ll cook it up.</p>
       `,
@@ -46,36 +49,36 @@ export default async function handler(req, res) {
         <h1 style="margin:0 0 12px">Your Toxic Meme Drop 😂</h1>
         <p>Ok, chaos goblin — your meme pack is ready:</p>
         <ul>
-          <li>“We outside 🔥 (might delete later idk)”</li>
-          <li>“Running 10 min late. 10 or 12? Be specific.”</li>
-          <li>“I ordered fries for the table. Do not touch <i>mine</i>.”</li>
+          <li>We outside 🔥 (might delete later idk)</li>
+          <li>Running 10 min late. 10 or 12? Be specific.</li>
+          <li>I ordered fries for the table. Do not touch <i>mine</i>.</li>
         </ul>
         <p>More spicy stuff soon. Thanks for joining.</p>
       `
     };
 
-    const subject = subjects[reward] || "✨ Welcome to Sygn Language";
-    const html = bodies[reward] || "<p>Welcome! You’re on the list.</p>";
+    const subject = subjects[reward] || '✨ Welcome to Sygn Language';
+    const html = bodies[reward] || '<p>Welcome! You’re on the list.</p>';
 
-    // send via Resend HTTP API (no extra npm packages needed)
+    // Send via Resend HTTP API
     const r = await fetch('https://api.resend.com/emails', {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${API_KEY}`,
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        from: FROM,          // e.g., "Sygn Language <hello@sygnlanguage.com>"
+        from: FROM,           // e.g., "Sygn Language <hello@your-domain.com>"
         to: email,
         subject,
-        html,
-      }),
+        html
+      })
     });
 
     if (!r.ok) {
       const text = await r.text();
       console.error('Resend error:', text);
-      return res.status(500).json({ ok: false, error: 'Email send failed' });
+      return res.status(502).json({ ok: false, error: 'Email send failed' });
     }
 
     return res.status(200).json({ ok: true });
