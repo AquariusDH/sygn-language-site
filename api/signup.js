@@ -1,4 +1,4 @@
-// api/signup.js
+// /api/signup.js
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     res.setHeader('Allow', ['POST']);
@@ -7,22 +7,29 @@ export default async function handler(req, res) {
 
   try {
     const { email, reward } = req.body || {};
-    // Correct email regex (your previous one had bracket/escape issues)
-    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    const emailOk = typeof email === 'string' && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
+    if (!emailOk) {
       return res.status(400).json({ ok: false, error: 'Invalid email' });
+    }
+
+    if (!reward || !['report', 'icebreakers', 'memes'].includes(reward)) {
+      return res.status(400).json({ ok: false, error: 'Invalid reward' });
     }
 
     const API_KEY = process.env.RESEND_API_KEY;
     const FROM = process.env.FROM_EMAIL || 'Sygn Language <hello@sygnlanguage.com>';
+
     if (!API_KEY) {
-      return res.status(500).json({ ok: false, error: 'Missing RESEND_API_KEY' });
+      console.error('Missing RESEND_API_KEY env var');
+      return res.status(500).json({ ok: false, error: 'Server not configured' });
     }
 
-    // pick subject/html by reward
+    // subjects + bodies
     const subjects = {
-      report: '✨ Your Mini Zodiac Report',
-      icebreakers: '🎲 Your Icebreaker Pack',
-      memes: '😂 Your Toxic Meme Drop'
+      report: "✨ Your Mini Zodiac Report",
+      icebreakers: "🎲 Your Icebreaker Pack",
+      memes: "😂 Your Toxic Meme Drop",
     };
 
     const bodies = {
@@ -57,28 +64,28 @@ export default async function handler(req, res) {
       `
     };
 
-    const subject = subjects[reward] || '✨ Welcome to Sygn Language';
-    const html = bodies[reward] || '<p>Welcome! You’re on the list.</p>';
+    const subject = subjects[reward] || "✨ Welcome to Sygn Language";
+    const html = bodies[reward] || "<p>Welcome! You’re on the list.</p>";
 
-    // Send via Resend HTTP API
+    // Send via Resend REST API
     const r = await fetch('https://api.resend.com/emails', {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${API_KEY}`,
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        from: FROM,           // e.g., "Sygn Language <hello@your-domain.com>"
-        to: email,
+        from: FROM,                 // e.g., "Sygn Language <hello@yourdomain.com>"
+        to: [email],                // array is safest with Resend
         subject,
-        html
-      })
+        html,
+      }),
     });
 
     if (!r.ok) {
-      const text = await r.text();
-      console.error('Resend error:', text);
-      return res.status(502).json({ ok: false, error: 'Email send failed' });
+      const text = await r.text().catch(()=> '');
+      console.error('Resend error:', text || r.status);
+      return res.status(500).json({ ok: false, error: 'Email send failed' });
     }
 
     return res.status(200).json({ ok: true });
