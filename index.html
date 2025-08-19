@@ -124,53 +124,129 @@
     // Year
     document.getElementById('year').textContent = new Date().getFullYear();
 
-    // --- Simple zodiac persona rules (client-side) ---
+    // ===== Smarter translator with variety & intent detection =====
     const tones = {
-      Aries: "Direct, bold, no fluff.",
-      Taurus: "Steady, practical, show reliability.",
-      Gemini: "Playful, curious, ask a quick question.",
-      Cancer: "Warm, reassuring, show care.",
-      Leo: "Confident, appreciative, a little hype.",
-      Virgo: "Clear, specific, organized.",
-      Libra: "Balanced, considerate, collaborative.",
-      Scorpio: "Intentional, honest, a bit intense is okay.",
-      Sagittarius: "Upbeat, spontaneous, freedom-friendly.",
-      Capricorn: "Structured, respectful of time/plans.",
-      Aquarius: "Thoughtful, original, give a reason.",
-      Pisces: "Gentle, empathetic, imaginative."
+      Aries: "Direct, bold, solution-first.",
+      Taurus: "Steady, specific, show reliability.",
+      Gemini: "Playful, curious—invite a quick reply.",
+      Cancer: "Warm, reassuring—name the feeling.",
+      Leo: "Confident, appreciative—add a little hype.",
+      Virgo: "Clear, structured, no ambiguity.",
+      Libra: "Balanced, considerate—offer two options.",
+      Scorpio: "Intentional, honest—no fluff.",
+      Sagittarius: "Upbeat, spontaneous—keep it light.",
+      Capricorn: "Respectful of time—clear next steps.",
+      Aquarius: "Thoughtful, original—explain the why.",
+      Pisces: "Gentle, empathetic—soft edges."
     };
 
-    function rewriteFor(sign, text) {
-      const msg = (text || "").trim();
-      const base = msg.replace(/\s+/g, " "); // clean spaces
+    const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
+    const clean = (s) => (s || "").trim().replace(/\s+/g, " ");
 
-      switch (sign) {
-        case "Aries": return base.replace(/\b(maybe|if you want|idk)\b/gi, "").trim() + (base ? " Let’s do it." : "Let’s do it.");
-        case "Taurus": return "Plan: " + (base || "Dinner at 7? I’ll book it.") + " I’ll handle the details.";
-        case "Gemini": return (base || "Hear me out—") + " Also… thoughts?";
-        case "Cancer": return (base || "Just checking in.") + " I care about how you feel.";
-        case "Leo": return "You’re great at this. " + (base || "Let’s make it fun tonight!");
-        case "Virgo": return (base || "Quick update:") + " (details are above and clear).";
-        case "Libra": return (base || "We could do A or B.") + " What feels good for you?";
-        case "Scorpio": return "Real talk: " + (base || "I want this to be honest and solid.");
-        case "Sagittarius": return (base || "Let’s try something different") + " — low stakes, high vibe.";
-        case "Capricorn": return "Agenda: " + (base || "Can we sync at 6? I’ll be on time.");
-        case "Aquarius": return (base || "Idea:") + " Here’s why it matters.";
-        case "Pisces": return (base || "I’ve been feeling this") + " — does that resonate?";
-        default: return base || "Hey!";
+    function detectIntent(text) {
+      const t = (text || "").toLowerCase();
+      if (/(sorry|apologiz|my bad|i was wrong)/.test(t)) return "apology";
+      if (/(can'?t|cannot|busy|overwhelmed|need space|boundary)/.test(t)) return "boundary";
+      if (/(hang|dinner|coffee|see you|plan|movie|tonight|tomorrow|\bwhen\b|\bwhat time\b|\bwhere\b|\bdate\b|\bmeet\b)/.test(t)) return "plan";
+      if (/(miss you|thinking of you|appreciate|grateful|care about|love|fond)/.test(t)) return "affection";
+      return "general";
+    }
+
+    const bits = {
+      openers: {
+        direct: ["Real talk:", "Quick check-in:", "Heads up:", "FYI:"],
+        warm: ["Hey—", "Hi :)", "Just sharing—", "Wanted to say—"],
+        playful: ["Hear me out—", "Tiny idea—", "Wild thought—", "Low-stakes pitch—"],
+      },
+      closers: {
+        invite: ["Thoughts?", "Works for you?", "Down?", "Open to it?"],
+        affirm: ["Appreciate you.", "Thanks for reading.", "I value this.", "All good either way."],
+        plan: ["I can lock it in.", "I’ll set it up.", "I’ll book it.", "I’ll handle details."]
+      }
+    };
+
+    const styles = {
+      Aries:   { opener: "direct", cadence: "short",   asks: ["Let’s decide now.", "Pick one and go."], soften:false },
+      Taurus:  { opener: "warm",   cadence: "grounded",asks: ["I’ll handle it.", "Keeping it simple."], soften:true },
+      Gemini:  { opener: "playful",cadence: "bouncy",  asks: ["Thoughts?", "What’s your take?"], soften:false },
+      Cancer:  { opener: "warm",   cadence: "soft",    asks: ["How does that feel?", "Okay with you?"], soften:true },
+      Leo:     { opener: "warm",   cadence: "confident",asks:["Let’s make it fun.", "You in?"], soften:false },
+      Virgo:   { opener: "direct", cadence: "ordered", asks: ["Confirm?", "Good with details?"], soften:false },
+      Libra:   { opener: "warm",   cadence: "balanced",asks: ["A or B?", "Which vibe fits?"], soften:true },
+      Scorpio: { opener: "direct", cadence: "intense", asks: ["Honest take?", "Are you aligned?"], soften:false },
+      Sagittarius:{opener:"playful",cadence:"upbeat",  asks:["Up for it?", "Say yes, we go."], soften:false },
+      Capricorn:{ opener: "direct", cadence: "crisp",  asks: ["Confirm time?", "Does this work?"], soften:false },
+      Aquarius:{ opener: "direct", cadence: "reasoned",asks: ["Make sense?", "On board?"], soften:false },
+      Pisces:  { opener: "warm",   cadence: "soft",    asks: ["Does this resonate?", "Feel okay?"], soften:true }
+    };
+
+    function templates(intent, signStyle, raw) {
+      const opener = pick(bits.openers[signStyle.opener]);
+      const closerInvite = pick(bits.closers.invite);
+      const closerAffirm = pick(bits.closers.affirm);
+      const closerPlan   = pick(bits.closers.plan);
+      const ask = pick(signStyle.asks);
+
+      switch (intent) {
+        case "apology":
+          return [
+            `${opener} I missed the mark earlier. ${raw || "That wasn’t fair."} I’m fixing it. ${ask}`,
+            `${opener} You’re right—${raw || "I didn’t handle that well."} I’ll do better next round. ${closerAffirm}`
+          ];
+        case "boundary":
+          return [
+            `${opener} I need a little space to reset. ${raw || "Can we pick this up later?"} ${signStyle.soften ? "I appreciate your patience. " : ""}${closerAffirm}`,
+            `${opener} Today’s packed on my end. ${raw || "Let’s regroup tomorrow."} ${closerInvite}`
+          ];
+        case "plan":
+          return [
+            `${opener} ${raw || "Dinner this week?"} ${signStyle.opener === "warm" ? "Low-key works." : "Let’s keep it simple."} ${closerPlan}`,
+            `${opener} ${raw || "Movie or tacos?"} I can do 7 or 8. ${ask}`
+          ];
+        case "affection":
+          return [
+            `${opener} ${raw || "Thinking of you."} Wanted you to know I appreciate you. ${closerAffirm}`,
+            `${opener} ${raw || "You matter to me."} Hope that lands how I mean it. ${closerInvite}`
+          ];
+        default:
+          return [
+            `${opener} ${raw || "Quick thought."} ${ask}`,
+            `${opener} ${raw || "Small update."} ${closerAffirm}`
+          ];
       }
     }
 
+    function rewriteFor(sign, text) {
+      const msg = clean(text);
+      const intent = detectIntent(msg);
+      const style = styles[sign] || styles.Aquarius;
+
+      let raw = msg || "";
+      if (style.cadence === "short") raw = raw.replace(/\,/g, " ").replace(/\band\b/gi, "&");
+      if (style.cadence === "ordered") {
+        raw = raw.replace(/\s+/g, " ").trim();
+        if (raw && !/[:.]$/.test(raw)) raw += ".";
+      }
+      if (style.soften && raw) raw = raw + " If that’s cool.";
+
+      const candidates = templates(intent, style, raw);
+      const chosen = pick(candidates);
+      return { tone: tones[sign] || "—", text: chosen };
+    }
+
     document.getElementById('translate').addEventListener('click', () => {
-      const you = document.getElementById('you').value;
       const them = document.getElementById('them').value;
       const msg = document.getElementById('msg').value;
 
-      document.getElementById('tone').textContent = tones[them] || "—";
-      document.getElementById('output').textContent = rewriteFor(them, msg);
+      const { tone, text } = rewriteFor(them, msg);
+      document.getElementById('tone').textContent = tone;
+
+      // Show 2 fresh variants each click for variety
+      const alt = rewriteFor(them, msg).text;
+      document.getElementById('output').textContent = `• ${text}\n• ${alt}`;
     });
 
-    // --- Waitlist form -> /api/signup ---
+    // ===== Waitlist form -> /api/signup =====
     const form = document.getElementById('waitlist');
     const statusEl = document.getElementById('form-status');
     const joinBtn = document.getElementById('join');
