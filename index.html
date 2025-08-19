@@ -23,11 +23,10 @@
     .card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 16px; }
     .stack { display: grid; gap: 12px; }
     label { font-size: 13px; color: #d6d6d6; }
-    select, textarea, input[type="email"] {
+    select, input[type="email"] {
       width: 100%; background: #0f0f0f; color: var(--text); border: 1px solid var(--border);
       border-radius: 10px; padding: 10px 12px; font-size: 14px; outline: none;
     }
-    textarea { min-height: 110px; resize: vertical; }
     .row { display: grid; gap: 12px; grid-template-columns: 1fr 1fr; }
     .btn { background: var(--brand); color: #000; font-weight: 700; border: 0; border-radius: 10px; padding: 12px 14px; cursor: pointer; }
     .btn:disabled { opacity: .6; cursor: not-allowed; }
@@ -36,6 +35,7 @@
     footer { margin: 28px 0 16px; text-align: center; color: var(--muted); font-size: 13px; }
     .grid { display: grid; gap: 16px; grid-template-columns: 1fr; }
     @media (min-width: 880px){ .grid { grid-template-columns: 2fr 1fr; } }
+    .pill { font-size: 12px; color:#cfcfcf; background:#0f0f0f; border:1px solid var(--border); border-radius:999px; padding:6px 10px; display:inline-block; }
   </style>
 </head>
 <body>
@@ -76,270 +76,23 @@
             </div>
           </div>
 
-          <div>
-            <label for="msg">Your message</label>
-            <textarea id="msg" placeholder="Type what you want to say…"></textarea>
+          <!-- PRESET PROMPTS ONLY -->
+          <div class="row">
+            <div>
+              <label for="category">Category</label>
+              <select id="category">
+                <option value="apology">Apology / Owning Up</option>
+                <option value="plan">Making Plans</option>
+                <option value="affection">Showing Affection</option>
+                <option value="boundary">Boundaries / Space</option>
+                <option value="general">General / Casual</option>
+              </select>
+            </div>
+            <div>
+              <label for="prompt">Prompt</label>
+              <select id="prompt"></select>
+            </div>
           </div>
 
-          <button id="translate" class="btn">Translate</button>
-
           <div>
-            <div class="muted" style="font-size:13px; margin-bottom:6px;">Suggested tone</div>
-            <div id="tone" class="out">—</div>
-          </div>
-
-          <div>
-            <div class="muted" style="font-size:13px; margin-bottom:6px;">Rewritten message</div>
-            <div id="output" class="out">—</div>
-          </div>
-        </div>
-      </section>
-
-      <!-- Waitlist -->
-      <aside class="card">
-        <h2 style="margin:0 0 12px; font-size:18px;">Get the app first</h2>
-        <p class="muted" style="margin-top:-6px;">Join the waitlist and we’ll email you when it launches.</p>
-        <form id="waitlist" class="stack" novalidate>
-          <div>
-            <label for="email">Email</label>
-            <input id="email" name="email" type="email" placeholder="you@email.com" required />
-          </div>
-          <label style="display:flex; gap:8px; align-items:flex-start; font-size:13px; color:#d6d6d6;">
-            <input type="checkbox" id="consent" required />
-            <span>I agree to receive product updates. Unsubscribe anytime.</span>
-          </label>
-          <button class="btn" id="join">Join waitlist</button>
-          <div id="form-status" class="muted" role="status" aria-live="polite"></div>
-        </form>
-      </aside>
-    </main>
-
-    <footer>
-      © <span id="year"></span> Sygn Language ·
-      <a href="/terms">Terms</a> · <a href="/privacy">Privacy</a>
-    </footer>
-  </div>
-
-  <script>
-    // Year
-    document.getElementById('year').textContent = new Date().getFullYear();
-
-    // ===== Smarter translator with MORE variety & intent detection =====
-    const tones = {
-      Aries: "Direct, bold, solution-first.",
-      Taurus: "Steady, specific, show reliability.",
-      Gemini: "Playful, curious—invite a quick reply.",
-      Cancer: "Warm, reassuring—name the feeling.",
-      Leo: "Confident, appreciative—add a little hype.",
-      Virgo: "Clear, structured, no ambiguity.",
-      Libra: "Balanced, considerate—offer two options.",
-      Scorpio: "Intentional, honest—no fluff.",
-      Sagittarius: "Upbeat, spontaneous—keep it light.",
-      Capricorn: "Respectful of time—clear next steps.",
-      Aquarius: "Thoughtful, original—explain the why.",
-      Pisces: "Gentle, empathetic—soft edges."
-    };
-
-    const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
-    const clean = (s) => (s || "").trim().replace(/\s+/g, " ");
-
-    function detectIntent(text) {
-      const t = (text || "").toLowerCase();
-      if (/(sorry|apologiz|my bad|i was wrong)/.test(t)) return "apology";
-      if (/(can'?t|cannot|busy|overwhelmed|need space|boundary)/.test(t)) return "boundary";
-      if (/(hang|dinner|coffee|see you|plan|movie|tonight|tomorrow|\bwhen\b|\bwhat time\b|\bwhere\b|\bdate\b|\bmeet\b)/.test(t)) return "plan";
-      if (/(miss you|thinking of you|appreciate|grateful|care about|love|fond)/.test(t)) return "affection";
-      return "general";
-    }
-
-    const bits = {
-      openers: {
-        direct: [
-          "Real talk:", "Quick check-in:", "Heads up:", "FYI:",
-          "Straight up—", "Here’s the deal:", "Cutting to it—", "Real quick—"
-        ],
-        warm: [
-          "Hey—", "Hi :)", "Just sharing—", "Wanted to say—",
-          "Hey friend—", "Good to see this—", "Small note—", "Passing this along—"
-        ],
-        playful: [
-          "Hear me out—", "Tiny idea—", "Wild thought—", "Low-stakes pitch—",
-          "Random idea—", "Lol okay—", "This just hit me—", "Off the cuff—"
-        ],
-      },
-      mids: {
-        // optional flavor inserts by sign style
-        Gemini: ["What’s your vibe?", "Fill me in.", "Spill a take?", "Hit me back."],
-        Cancer: ["I’ve been feeling this…", "Hope that lands right.", "Wanted this to feel safe.", "No pressure."],
-        Leo: ["You’ll love this.", "This has your name on it.", "Big energy only.", "Let’s make it pop."],
-        Scorpio: ["No games here.", "Being upfront.", "Saying it straight.", "Keeping it real."],
-        Virgo: ["Kept it clear.", "No loose ends.", "All details included.", "Very specific."],
-        Pisces: ["Just a feeling…", "Soft take:", "If it resonates…", "Gentle ask:"],
-        Sagittarius: ["Adventure mode.", "Zero stress.", "We can wing it.", "Vibes first."],
-        Libra: ["Open to either.", "Happy to meet in the middle.", "Balance is good.", "Your call works."],
-        Taurus: ["Keeping it simple.", "Solid plan.", "No rush.", "Comfort first."],
-        Aquarius: ["Made sense to me.", "Here’s my why.", "Curious if it lands.", "Open to a better idea."],
-        Capricorn: ["Respecting time.", "Keeping it crisp.", "Concrete next step.", "Let’s be efficient."],
-        Aries: ["Momentum!", "Let’s move.", "No fluff.", "Decisive take."]
-      },
-      closers: {
-        invite: ["Thoughts?", "Works for you?", "Down?", "Open to it?", "How’s that land?", "Good with that?"],
-        affirm: ["Appreciate you.", "Thanks for reading.", "I value this.", "All good either way.", "Thanks for hearing me.", "I’m here for it."],
-        plan: ["I can lock it in.", "I’ll set it up.", "I’ll book it.", "I’ll handle details.", "I’ll confirm time.", "I’ll send options."]
-      }
-    };
-
-    const styles = {
-      Aries:   { opener: "direct", cadence: "short",   asks: ["Let’s decide now.", "Pick one and go.", "Call it and we move.", "Ready to run with it?"], soften:false },
-      Taurus:  { opener: "warm",   cadence: "grounded",asks: ["I’ll handle it.", "Keeping it simple.", "Does steady work?", "We can pace it."], soften:true },
-      Gemini:  { opener: "playful",cadence: "bouncy",  asks: ["Thoughts?", "What’s your take?", "Shoot me a quick reply?", "Give me your spin?"], soften:false },
-      Cancer:  { opener: "warm",   cadence: "soft",    asks: ["How does that feel?", "Okay with you?", "Does that sit right?", "Cool if we try?"], soften:true },
-      Leo:     { opener: "warm",   cadence: "confident",asks:["Let’s make it fun.", "You in?", "Want to lead this?", "Let’s go big?"], soften:false },
-      Virgo:   { opener: "direct", cadence: "ordered", asks: ["Confirm?", "Good with details?", "Does this align?", "Can we lock it?"], soften:false },
-      Libra:   { opener: "warm",   cadence: "balanced",asks: ["A or B?", "Which vibe fits?", "What feels fair?", "Happy with either?"], soften:true },
-      Scorpio: { opener: "direct", cadence: "intense", asks: ["Honest take?", "Are you aligned?", "Can we be real on this?", "Truth time?"], soften:false },
-      Sagittarius:{opener:"playful",cadence:"upbeat",  asks:["Up for it?", "Say yes, we go.", "Wanna wing it?", "We can switch it up."], soften:false },
-      Capricorn:{ opener: "direct", cadence: "crisp",  asks: ["Confirm time?", "Does this work?", "Green light?", "Are we set?"], soften:false },
-      Aquarius:{ opener: "direct", cadence: "reasoned",asks: ["Make sense?", "On board?", "Does the why track?", "Logic check?"], soften:false },
-      Pisces:  { opener: "warm",   cadence: "soft",    asks: ["Does this resonate?", "Feel okay?", "Kind of vibe with this?", "Open-hearted yes?"], soften:true }
-    };
-
-    function optionalMid(sign) {
-      const pool = bits.mids[sign] || [];
-      return pool.length ? " " + pick(pool) : "";
-    }
-
-    function templates(intent, sign, signStyle, raw) {
-      const opener = pick(bits.openers[signStyle.opener]);
-      const closerInvite = pick(bits.closers.invite);
-      const closerAffirm = pick(bits.closers.affirm);
-      const closerPlan   = pick(bits.closers.plan);
-      const ask = pick(signStyle.asks);
-      const mid = optionalMid(sign);
-
-      switch (intent) {
-        case "apology":
-          return [
-            `${opener} I missed the mark earlier. ${raw || "That wasn’t fair."}${mid} I’m fixing it. ${ask}`,
-            `${opener} You’re right—${raw || "I didn’t handle that well."}${mid} I’ll do better next round. ${closerAffirm}`,
-            `${opener} I hear you. ${raw || "I overstepped."}${mid} Thanks for the patience. ${ask}`,
-            `${opener} Owning it: ${raw || "I was off."}${mid} Won’t repeat it. ${closerAffirm}`,
-            `${opener} That came out wrong. ${raw || "I care about this."}${mid} Can we reset? ${ask}`
-          ];
-        case "boundary":
-          return [
-            `${opener} I need a little space to reset. ${raw || "Can we pick this up later?"}${mid} ${signStyle.soften ? "I appreciate your patience. " : ""}${closerAffirm}`,
-            `${opener} Today’s packed on my end. ${raw || "Let’s regroup tomorrow."}${mid} ${closerInvite}`,
-            `${opener} Quick flag: ${raw || "I can’t give this full energy right now."}${mid} I want to do it right. ${ask}`,
-            `${opener} For my sanity, ${raw || "I need a breather."}${mid} Thanks for understanding. ${closerAffirm}`,
-            `${opener} Capacity check—${raw || "let’s slow this down."}${mid} Still in, just pacing. ${closerInvite}`
-          ];
-        case "plan":
-          return [
-            `${opener} ${raw || "Dinner this week?"} ${signStyle.opener === "warm" ? "Low-key works." : "Let’s keep it simple."}${mid} ${closerPlan}`,
-            `${opener} ${raw || "Movie or tacos?"} I can do 7 or 8.${mid} ${ask}`,
-            `${opener} ${raw || "Coffee then a walk?"}${mid} If yes, I’ll send times. ${closerPlan}`,
-            `${opener} ${raw || "Thursday or Friday?"}${mid} I can flex. ${closerInvite}`,
-            `${opener} So here’s my thought—${raw || "short and sweet."}${mid} I’ll handle logistics. ${closerPlan}`
-          ];
-        case "affection":
-          return [
-            `${opener} ${raw || "Thinking of you."}${mid} Wanted you to know I appreciate you. ${closerAffirm}`,
-            `${opener} ${raw || "You matter to me."}${mid} Hope that lands how I mean it. ${closerInvite}`,
-            `${opener} ${raw || "Grateful for you."}${mid} Just saying it. ${closerAffirm}`,
-            `${opener} ${raw || "You’ve been on my mind."}${mid} Felt right to share. ${closerInvite}`,
-            `${opener} ${raw || "I care about us."}${mid} Thanks for being you. ${closerAffirm}`
-          ];
-        default:
-          return [
-            `${opener} ${raw || "Quick thought."}${mid} ${ask}`,
-            `${opener} ${raw || "Small update."}${mid} ${closerAffirm}`,
-            `${opener} ${raw || "Idea worth a try."}${mid} ${closerInvite}`,
-            `${opener} ${raw || "Short and clear."}${mid} ${ask}`,
-            `${opener} ${raw || "Heads-up, nothing heavy."}${mid} ${closerAffirm}`
-          ];
-      }
-    }
-
-    function rewriteFor(sign, text) {
-      const msg = clean(text);
-      const intent = detectIntent(msg);
-      const style = styles[sign] || styles.Aquarius;
-
-      let raw = msg || "";
-      if (style.cadence === "short") raw = raw.replace(/\,/g, " ").replace(/\band\b/gi, "&");
-      if (style.cadence === "ordered") {
-        raw = raw.replace(/\s+/g, " ").trim();
-        if (raw && !/[:.]$/.test(raw)) raw += ".";
-      }
-      if (style.soften && raw) raw = raw + " If that’s cool.";
-
-      const candidates = templates(intent, sign, style, raw);
-      const chosen = pick(candidates);
-      return { tone: tones[sign] || "—", text: chosen };
-    }
-
-    function generateVariants(sign, msg, n = 4) {
-      const out = new Set();
-      let guard = 0;
-      while (out.size < n && guard < 50) {
-        guard++;
-        const variant = rewriteFor(sign, msg).text;
-        out.add(variant);
-      }
-      return Array.from(out);
-    }
-
-    document.getElementById('translate').addEventListener('click', () => {
-      const them = document.getElementById('them').value;
-      const msg = document.getElementById('msg').value;
-
-      document.getElementById('tone').textContent = tones[them] || "—";
-
-      const variants = generateVariants(them, msg, 4);
-      document.getElementById('output').textContent = variants.map(v => `• ${v}`).join('\n');
-    });
-
-    // ===== Waitlist form -> /api/signup =====
-    const form = document.getElementById('waitlist');
-    const statusEl = document.getElementById('form-status');
-    const joinBtn = document.getElementById('join');
-
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      statusEl.textContent = "";
-      joinBtn.disabled = true; joinBtn.textContent = "Sending…";
-
-      const email = document.getElementById('email').value.trim();
-      const consent = document.getElementById('consent').checked;
-
-      if (!email || !consent) {
-        statusEl.textContent = "Please enter a valid email and agree to updates.";
-        joinBtn.disabled = false; joinBtn.textContent = "Join waitlist";
-        return;
-      }
-
-      try {
-        const res = await fetch('/api/signup', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, reward: 'waitlist' })
-        });
-        if (res.ok) {
-          statusEl.textContent = "✅ Thanks! Check your inbox.";
-          form.reset();
-        } else {
-          const j = await res.json().catch(()=>({}));
-          statusEl.textContent = "❌ Could not send email. Try again.";
-          console.error('Signup error', j);
-        }
-      } catch (err) {
-        console.error(err);
-        statusEl.textContent = "❌ Network error. Try again.";
-      } finally {
-        joinBtn.disabled = false; joinBtn.textContent = "Join waitlist";
-      }
-    });
-  </script>
-</body>
-</html>
+            <span class="pill" id="prompt-preview">Prompt
