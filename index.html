@@ -3,349 +3,211 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Sygn Language — Every sign speaks differently</title>
-  <meta name="description" content="Sygn Language — Zodiac × Relationships. Be first to try the app." />
-  <link rel="canonical" href="https://sygn-language-site.vercel.app/">
-  <meta property="og:title" content="Sygn Language — Every sign speaks differently">
-  <meta property="og:description" content="Zodiac × Relationships. Be first to try the app.">
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://sygn-language-site.vercel.app/">
-  <meta name="theme-color" content="#1A1A1A">
-
+  <title>Sygn Language — Zodiac Translator</title>
+  <meta name="description" content="Translate your message for any zodiac sign’s style. Join the waitlist to get the app first." />
+  <meta name="theme-color" content="#0b0b0b" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          fontFamily: { sans: ['Inter', 'ui-sans-serif', 'system-ui'] },
-          colors: {
-            void: '#1A1A1A',
-            neonBlue: '#3A86FF',
-            neonPink: '#FF006E',
-            galaxyPurple: '#8338EC'
-          },
-          dropShadow: {
-            neon: '0 0 25px rgba(58,134,255,0.45)',
-            pink: '0 0 25px rgba(255,0,110,0.45)',
-            purple: '0 0 25px rgba(131,56,236,0.45)'
-          }
-        }
-      }
-    }
-  </script>
   <style>
-    /* --- Starfield (lighter) --- */
-    .starfield::before, .starfield::after {
-      content: "";
-      position: absolute; inset: 0; pointer-events: none;
-      background-image:
-        radial-gradient(2px 2px at 20% 30%, rgba(255,255,255,0.55) 50%, transparent 51%),
-        radial-gradient(1.5px 1.5px at 70% 60%, rgba(255,255,255,0.4) 50%, transparent 51%),
-        radial-gradient(1.5px 1.5px at 40% 80%, rgba(255,255,255,0.35) 50%, transparent 51%),
-        radial-gradient(1.5px 1.5px at 85% 25%, rgba(255,255,255,0.45) 50%, transparent 51%);
-      background-repeat: no-repeat;
-      animation: twinkle 8s ease-in-out infinite;
-      opacity: .35;
+    :root { --bg:#0b0b0b; --card:#141414; --muted:#9aa0a6; --brand:#3A86FF; --text:#fff; --border:#2a2a2a; }
+    * { box-sizing: border-box; }
+    html,body { margin:0; padding:0; background:var(--bg); color:var(--text); font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
+    a { color: var(--brand); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .container { max-width: 880px; margin: 0 auto; padding: 24px; }
+    .hero { text-align: center; margin: 24px 0 16px; }
+    .h1 { font-weight: 800; font-size: clamp(28px, 3.5vw, 36px); letter-spacing: -0.02em; }
+    .sub { color: var(--muted); margin-top: 6px; font-size: 15px; }
+    .note { margin-top: 10px; color: var(--muted); font-size: 14px; }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 16px; }
+    .stack { display: grid; gap: 12px; }
+    label { font-size: 13px; color: #d6d6d6; }
+    select, textarea, input[type="email"] {
+      width: 100%; background: #0f0f0f; color: var(--text); border: 1px solid var(--border);
+      border-radius: 10px; padding: 10px 12px; font-size: 14px; outline: none;
     }
-    .starfield::after { filter: blur(0.5px); animation-duration: 12s; opacity: .22; }
-    @keyframes twinkle { 0%,100%{opacity:.25} 50%{opacity:.65} }
-
-    .neon-btn { transition: all .2s ease; }
-    .neon-btn:hover { transform: translateY(-1px); box-shadow: 0 0 24px rgba(58,134,255,.35); }
-
-    /* --- Background (lighter + adaptive) --- */
-    #nebula {
-      background:
-        radial-gradient(60% 40% at 20% 30%, rgba(131,56,236,0.18), transparent 60%),
-        radial-gradient(50% 35% at 80% 20%, rgba(58,134,255,0.16), transparent 60%),
-        radial-gradient(55% 45% at 50% 80%, rgba(255,0,110,0.14), transparent 65%);
-      filter: blur(28px) saturate(115%);
-      animation: nebulaMove 24s ease-in-out infinite alternate;
-      will-change: transform;
-    }
-    @keyframes nebulaMove { 0% { transform: translate3d(0,0,0) scale(1);} 100% { transform: translate3d(-1%, -1%, 0) scale(1.02);} }
-
-    #aurora { position: absolute; inset: 0; overflow: hidden; }
-    #aurora .wave { position: absolute; left: -20%; width: 140%; height: 50%; filter: blur(24px); opacity: 0.22; mix-blend-mode: screen; will-change: transform; pointer-events: none; }
-    #aurora .wave-a { top: 10%; background: linear-gradient(90deg, rgba(131,56,236,0.22), rgba(58,134,255,0.18)); transform: rotate(-4deg); animation: auroraSlideA 28s linear infinite; }
-    #aurora .wave-b { bottom: 8%; background: linear-gradient(90deg, rgba(255,0,110,0.18), rgba(131,56,236,0.16), rgba(0,0,0,0)); transform: rotate(3deg); animation: auroraSlideB 34s linear infinite reverse; }
-    @keyframes auroraSlideA { 0% { transform: translateX(0) rotate(-4deg);} 100% { transform: translateX(-10%) rotate(-4deg);} }
-    @keyframes auroraSlideB { 0% { transform: translateX(-6%) rotate(3deg);} 100% { transform: translateX(5%) rotate(3deg);} }
-
-    /* Reduce heavy effects on small screens */
-    @media (max-width: 640px) {
-      #nebula { filter: blur(18px); }
-      #aurora .wave { filter: blur(18px); opacity: 0.18; }
-    }
-
-    /* Respect "Reduce Motion" setting */
-    @media (prefers-reduced-motion: reduce) {
-      .starfield::before, .starfield::after,
-      #nebula, #aurora .wave { animation: none !important; }
-    }
+    textarea { min-height: 110px; resize: vertical; }
+    .row { display: grid; gap: 12px; grid-template-columns: 1fr 1fr; }
+    .btn { background: var(--brand); color: #000; font-weight: 700; border: 0; border-radius: 10px; padding: 12px 14px; cursor: pointer; }
+    .btn:disabled { opacity: .6; cursor: not-allowed; }
+    .out { white-space: pre-wrap; background:#0f0f0f; border: 1px solid var(--border); padding: 12px; border-radius: 10px; font-size: 14px; }
+    .muted { color: var(--muted); }
+    footer { margin: 28px 0 16px; text-align: center; color: var(--muted); font-size: 13px; }
+    .grid { display: grid; gap: 16px; grid-template-columns: 1fr; }
+    @media (min-width: 880px){ .grid { grid-template-columns: 2fr 1fr; } }
   </style>
 </head>
-<body class="bg-void text-white font-sans min-h-screen relative overflow-x-hidden">
-  <!-- Cookie banner -->
-  <div id="cookie-banner" class="fixed bottom-4 left-1/2 -translate-x-1/2 z-[60] hidden w-[95%] max-w-xl rounded-2xl border border-white/10 bg-[#121212] p-4 text-sm shadow-2xl">
-    <p class="text-white/80">
-      We use cookies for analytics to improve Sygn Language. Accept?
-      <a href="./privacy.html" class="underline text-white/70 hover:text-white">Privacy</a> ·
-      <a href="./terms.html" class="underline text-white/70 hover:text-white">Terms</a>
-    </p>
-    <div class="mt-3 flex gap-2">
-      <button id="cookie-accept" class="rounded-lg px-3 py-2 bg-neonBlue text-black font-semibold">Accept</button>
-      <button id="cookie-decline" class="rounded-lg px-3 py-2 bg-white/10 border border-white/10">Decline</button>
-    </div>
-  </div>
+<body>
+  <div class="container">
+    <header class="hero">
+      <div class="h1">Sygn Language — Zodiac Translator</div>
+      <p class="sub">Rewrite your message for how their sign actually hears it.</p>
+      <p class="note">App coming soon — join the waitlist below to be first to know.</p>
+    </header>
 
-  <!-- Gradient halos -->
-  <div class="pointer-events-none absolute -top-40 -left-40 h-96 w-96 rounded-full blur-3xl" style="background: radial-gradient(50% 50% at 50% 50%, rgba(58,134,255,.22), transparent 60%)"></div>
-  <div class="pointer-events-none absolute -bottom-40 -right-40 h-[28rem] w-[28rem] rounded-full blur-3xl" style="background: radial-gradient(50% 50% at 50% 50%, rgba(255,0,110,.18), transparent 60%)"></div>
+    <main class="grid">
+      <!-- Translator -->
+      <section class="card">
+        <h2 style="margin:0 0 12px; font-size:18px;">Translate a message</h2>
+        <div class="stack">
+          <div class="row">
+            <div>
+              <label for="you">Your sign</label>
+              <select id="you">
+                <option value="Aries">Aries</option><option value="Taurus">Taurus</option>
+                <option value="Gemini">Gemini</option><option value="Cancer">Cancer</option>
+                <option value="Leo">Leo</option><option value="Virgo">Virgo</option>
+                <option value="Libra">Libra</option><option value="Scorpio">Scorpio</option>
+                <option value="Sagittarius">Sagittarius</option><option value="Capricorn">Capricorn</option>
+                <option value="Aquarius">Aquarius</option><option value="Pisces">Pisces</option>
+              </select>
+            </div>
+            <div>
+              <label for="them">Their sign</label>
+              <select id="them">
+                <option value="Aries">Aries</option><option value="Taurus">Taurus</option>
+                <option value="Gemini">Gemini</option><option value="Cancer">Cancer</option>
+                <option value="Leo">Leo</option><option value="Virgo">Virgo</option>
+                <option value="Libra">Libra</option><option value="Scorpio">Scorpio</option>
+                <option value="Sagittarius">Sagittarius</option><option value="Capricorn">Capricorn</option>
+                <option value="Aquarius">Aquarius</option><option value="Pisces">Pisces</option>
+              </select>
+            </div>
+          </div>
 
-  <main class="relative starfield">
-    <!-- Mystic background (fixed behind everything) -->
-    <div class="pointer-events-none fixed inset-0 -z-10">
-      <div id="nebula" class="absolute inset-0"></div>
-      <div id="aurora">
-        <span class="wave wave-a"></span>
-        <span class="wave wave-b"></span>
-      </div>
-    </div>
+          <div>
+            <label for="msg">Your message</label>
+            <textarea id="msg" placeholder="Type what you want to say…"></textarea>
+          </div>
 
-    <section class="max-w-5xl mx-auto px-6 pt-20 pb-16 text-center">
-      <!-- Wordmark ONLY -->
-      <div class="inline-flex items-center gap-3">
-        <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight drop-shadow-neon">Sygn Language</h1>
-      </div>
-      <p class="mt-3 text-lg/7 text-white/80">Every sign speaks differently.</p>
+          <button id="translate" class="btn">Translate</button>
 
-      <!-- Coming Soon Banner -->
-      <section class="text-center py-12 bg-gradient-to-r from-purple-700/30 via-pink-600/30 to-blue-600/30 rounded-2xl max-w-3xl mx-auto mt-8">
-        <h2 class="text-3xl font-extrabold text-white">✨ Sygn Language App — Coming Soon ✨</h2>
-        <p class="text-white/80 mt-4 text-lg">
-          Sign up below to be the first to know when the app drops. Get early access, sneak peeks, and special rewards.
-        </p>
+          <div>
+            <div class="muted" style="font-size:13px; margin-bottom:6px;">Suggested tone</div>
+            <div id="tone" class="out">—</div>
+          </div>
+
+          <div>
+            <div class="muted" style="font-size:13px; margin-bottom:6px;">Rewritten message</div>
+            <div id="output" class="out">—</div>
+          </div>
+        </div>
       </section>
 
-      <!-- Hero copy -->
-      <h2 class="mt-10 text-4xl md:text-6xl font-extrabold tracking-tight">
-        Zodiac × Relationships<span class="text-transparent bg-clip-text bg-gradient-to-r from-neonBlue via-galaxyPurple to-neonPink">, decoded</span>
-      </h2>
-      <p class="mt-4 text-white/70 max-w-2xl mx-auto">Compatibility, communication tips, and daily vibes — designed for how <em>your</em> sign (and theirs) actually speaks.</p>
-
-      <!-- Email signup -->
-      <form id="waitlist" class="mt-10 max-w-md mx-auto flex flex-col gap-3" novalidate>
-        <input id="email" name="email" type="email" required placeholder="Enter your email"
-               autocomplete="email"
-               class="w-full rounded-xl bg-white/5 border border-white/10 px-4 py-3 outline-none focus:border-neonBlue/70" />
-
-        <div class="text-left text-white/80 text-sm space-y-1">
-          <p class="font-semibold">Choose your reward:</p>
-          <label class="flex items-center gap-2"><input type="radio" name="reward" value="report" required> ✨ Mini Zodiac Report</label>
-          <label class="flex items-center gap-2"><input type="radio" name="reward" value="icebreakers"> 🎲 Icebreaker Pack</label>
-          <label class="flex items-center gap-2"><input type="radio" name="reward" value="memes"> 😂 Toxic Meme Drop</label>
-        </div>
-
-        <label class="mt-1 text-xs text-left text-white/60 flex items-start gap-2">
-          <input type="checkbox" id="consent" required>
-          <span>I agree to receive my selected reward and occasional updates. Unsubscribe anytime. See our <a href="./privacy.html" class="underline">Privacy Policy</a>.</span>
-        </label>
-
-        <button id="submit-btn" class="neon-btn rounded-xl px-5 py-3 font-semibold bg-neonBlue text-black">Claim my reward</button>
-        <p id="form-status" class="text-xs text-white/70 min-h-[1.25rem]" role="status" aria-live="polite"></p>
-      </form>
-
-      <!-- Socials -->
-      <div class="mt-8 flex items-center justify-center gap-5 text-white/70">
-        <a href="https://www.tiktok.com/@sygnlanguage" target="_blank" rel="noopener noreferrer" aria-label="TikTok" class="hover:text-white">TikTok</a>
-        <span class="text-white/30">•</span>
-        <a href="https://www.instagram.com/sygnzodiac?igsh=b2Q5d3BvZTQxemZy" target="_blank" rel="noopener noreferrer" aria-label="Instagram" class="hover:text-white">Instagram</a>
-      </div>
-
-      <!-- Teasers -->
-      <div class="mt-14 grid md:grid-cols-3 gap-4 max-w-4xl mx-auto text-left">
-        <button id="open-compatibility" class="rounded-2xl border border-white/10 bg-white/5 p-5 w-full hover:bg-white/10 transition">
-          <p class="text-sm text-white/60">Feature Sneak Peek</p>
-          <h3 class="mt-1 font-semibold flex items-center justify-between">
-            Daily Compatibility <span class="text-white/50 text-xs">What to do / avoid →</span>
-          </h3>
-          <p class="mt-1 text-sm text-white/70">Real-relationship advice for your pairing.</p>
-        </button>
-
-        <button id="open-textgame" class="rounded-2xl border border-white/10 bg-white/5 p-5 w-full text-left hover:bg-white/10 transition">
-          <p class="text-sm text-white/60">Feature Sneak Peek</p>
-          <h3 class="mt-1 font-semibold flex items-center justify-between">
-            How They Text <span class="text-white/50 text-xs">Guess the sign →</span>
-          </h3>
-          <p class="mt-1 text-sm text-white/70">Toxic-funny chat receipts. Can you spot the energy?</p>
-        </button>
-
-        <button id="open-icebreakers" class="rounded-2xl border border-white/10 bg-white/5 p-5 w-full hover:bg-white/10 transition">
-          <p class="text-sm text-white/60">Feature Sneak Peek</p>
-          <h3 class="mt-1 font-semibold flex items-center justify-between">
-            Icebreakers <span class="text-white/50 text-xs">Tap for 3 prompts →</span>
-          </h3>
-          <p class="mt-1 text-sm text-white/70">Openers tailored to your dynamic.</p>
-        </button>
-      </div>
-
-      <!-- Modals (unchanged content) -->
-      <div id="icebreakers-modal" class="fixed inset-0 z-50 hidden items-center justify-center">
-        <div id="icebreakers-overlay" class="absolute inset-0 bg-black/70"></div>
-        <div class="relative mx-4 w-full max-w-lg rounded-2xl border border-white/10 bg-[#121212] p-6 shadow-2xl text-left">
-          <div class="mb-4 flex items-center justify-between">
-            <h3 class="text-xl font-bold">
-              Icebreakers — <span class="text-transparent bg-clip-text bg-gradient-to-r from-neonBlue via-galaxyPurple to-neonPink">Scorpio × Aquarius</span>
-            </h3>
-            <button id="close-icebreakers" class="text-white/60 hover:text-white text-sm">Close ✕</button>
+      <!-- Waitlist -->
+      <aside class="card">
+        <h2 style="margin:0 0 12px; font-size:18px;">Get the app first</h2>
+        <p class="muted" style="margin-top:-6px;">Join the waitlist and we’ll email you when it launches.</p>
+        <form id="waitlist" class="stack" novalidate>
+          <div>
+            <label for="email">Email</label>
+            <input id="email" name="email" type="email" placeholder="you@email.com" required />
           </div>
-          <ol class="space-y-3" id="icebreaker-list"></ol>
-          <div class="mt-6 flex items-center justify-between">
-            <button id="shuffle-icebreakers" class="rounded-xl px-4 py-2 font-semibold bg-galaxyPurple text-white hover:brightness-110">New set</button>
-            <button id="copy-all-icebreakers" class="rounded-xl px-4 py-2 font-semibold bg-neonBlue text-black hover:brightness-110">Copy all</button>
-          </div>
-        </div>
-      </div>
+          <label style="display:flex; gap:8px; align-items:flex-start; font-size:13px; color:#d6d6d6;">
+            <input type="checkbox" id="consent" required />
+            <span>I agree to receive product updates. Unsubscribe anytime.</span>
+          </label>
+          <button class="btn" id="join">Join waitlist</button>
+          <div id="form-status" class="muted" role="status" aria-live="polite"></div>
+        </form>
+      </aside>
+    </main>
 
-      <div id="textgame-modal" class="fixed inset-0 z-50 hidden items-center justify-center">
-        <div id="textgame-overlay" class="absolute inset-0 bg-black/70"></div>
-        <div class="relative mx-4 w-full max-w-lg rounded-2xl border border-white/10 bg-[#121212] p-6 shadow-2xl text-left">
-          <div class="mb-4 flex items-center justify-between">
-            <h3 class="text-xl font-bold">
-              How They Text — <span class="text-transparent bg-clip-text bg-gradient-to-r from-neonBlue via-galaxyPurple to-neonPink">Guess the sign</span>
-            </h3>
-            <button id="close-textgame" class="text-white/60 hover:text-white text-sm">Close ✕</button>
-          </div>
-          <div id="chat" class="space-y-2 max-h-72 overflow-y-auto pr-1"></div>
-          <div id="options" class="mt-5 grid grid-cols-2 gap-2"></div>
-          <div id="feedback" class="mt-4 text-sm"></div>
-          <div class="mt-6 flex items-center justify-between">
-            <button id="next-textgame" class="rounded-xl px-4 py-2 font-semibold bg-galaxyPurple text-white hover:brightness-110">Another convo</button>
-            <button id="cta-textgame" class="rounded-xl px-4 py-2 font-semibold bg-neonBlue text-black hover:brightness-110">Get the full texting playbook →</button>
-          </div>
-        </div>
-      </div>
-
-      <div id="compatibility-modal" class="fixed inset-0 z-50 hidden items-center justify-center">
-        <div id="compatibility-overlay" class="absolute inset-0 bg-black/70"></div>
-        <div class="relative mx-4 w-full max-w-lg rounded-2xl border border-white/10 bg-[#121212] p-6 shadow-2xl text-left">
-          <div class="mb-4 flex items-center justify-between">
-            <h3 class="text-xl font-bold">Daily Compatibility</h3>
-            <button id="close-compatibility" class="text-white/60 hover:text-white text-sm">Close ✕</button>
-          </div>
-          <div id="compatibility-content" class="space-y-4"></div>
-          <div class="mt-6 flex items-center justify-between">
-            <button id="shuffle-compatibility" class="rounded-xl px-4 py-2 font-semibold bg-galaxyPurple text-white hover:brightness-110">New one</button>
-            <button id="copy-compatibility" class="rounded-xl px-4 py-2 font-semibold bg-neonBlue text-black hover:brightness-110">Copy</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Footer -->
-      <p class="mt-16 text-xs text-white/40">
-        © <span id="year"></span> Sygn Language. All rights reserved. ·
-        <a href="./terms.html" class="underline">Terms</a> ·
-        <a href="./privacy.html" class="underline">Privacy</a>
-      </p>
-    </section>
-  </main>
+    <footer>
+      © <span id="year"></span> Sygn Language ·
+      <a href="/terms">Terms</a> · <a href="/privacy">Privacy</a>
+    </footer>
+  </div>
 
   <script>
-    // Pause heavy background if device looks slow (very rough heuristic)
-    (function maybeReduceEffects(){
-      const t0 = performance.now();
-      requestAnimationFrame(() => {
-        const dt = performance.now() - t0;
-        if (dt > 50) { // main thread was busy
-          document.documentElement.classList.add('low-power');
-          // Disable starfield/aurora if needed:
-          document.querySelectorAll('#aurora .wave').forEach(el => el.style.animation = 'none');
-          const neb = document.getElementById('nebula'); if (neb) neb.style.animation = 'none';
-        }
-      });
-    })();
-
-    // --- Year ---
+    // Year
     document.getElementById('year').textContent = new Date().getFullYear();
 
-    // --- Cookie consent + GA4 lazy load ---
-    const GA_ID = 'G-XXXXXXX'; // replace with your GA4 ID
-    function loadGA(){
-      if (!GA_ID || GA_ID.includes('XXXX')) return;
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){ dataLayer.push(arguments); }
-      window.gtag = window.gtag || gtag;
-      gtag('js', new Date()); gtag('config', GA_ID);
-      const s = document.createElement('script');
-      s.async = true; s.src = `https://www.googletagmanager.com/gtag/js?id=${GA_ID}`;
-      document.head.appendChild(s);
+    // --- Simple zodiac persona rules (client-side) ---
+    const tones = {
+      Aries: "Direct, bold, no fluff.",
+      Taurus: "Steady, practical, show reliability.",
+      Gemini: "Playful, curious, ask a quick question.",
+      Cancer: "Warm, reassuring, show care.",
+      Leo: "Confident, appreciative, a little hype.",
+      Virgo: "Clear, specific, organized.",
+      Libra: "Balanced, considerate, collaborative.",
+      Scorpio: "Intentional, honest, a bit intense is okay.",
+      Sagittarius: "Upbeat, spontaneous, freedom-friendly.",
+      Capricorn: "Structured, respectful of time/plans.",
+      Aquarius: "Thoughtful, original, give a reason.",
+      Pisces: "Gentle, empathetic, imaginative."
+    };
+
+    function rewriteFor(sign, text) {
+      const msg = (text || "").trim();
+      const base = msg.replace(/\s+/g, " "); // clean spaces
+
+      switch (sign) {
+        case "Aries": return base.replace(/\b(maybe|if you want|idk)\b/gi, "").trim() + (base ? " Let’s do it." : "Let’s do it.");
+        case "Taurus": return "Plan: " + (base || "Dinner at 7? I’ll book it.") + " I’ll handle the details.";
+        case "Gemini": return (base || "Hear me out—") + " Also… thoughts?";
+        case "Cancer": return (base || "Just checking in.") + " I care about how you feel.";
+        case "Leo": return "You’re great at this. " + (base || "Let’s make it fun tonight!");
+        case "Virgo": return (base || "Quick update:") + " (details are above and clear).";
+        case "Libra": return (base || "We could do A or B.") + " What feels good for you?";
+        case "Scorpio": return "Real talk: " + (base || "I want this to be honest and solid.");
+        case "Sagittarius": return (base || "Let’s try something different") + " — low stakes, high vibe.";
+        case "Capricorn": return "Agenda: " + (base || "Can we sync at 6? I’ll be on time.");
+        case "Aquarius": return (base || "Idea:") + " Here’s why it matters.";
+        case "Pisces": return (base || "I’ve been feeling this") + " — does that resonate?";
+        default: return base || "Hey!";
+      }
     }
-    (function consent(){
-      const banner = document.getElementById('cookie-banner');
-      const accept = document.getElementById('cookie-accept');
-      const decline = document.getElementById('cookie-decline');
-      const val = localStorage.getItem('cookie-consent');
-      if (!val) banner.classList.remove('hidden');
-      accept?.addEventListener('click', () => {
-        localStorage.setItem('cookie-consent', 'granted');
-        banner.classList.add('hidden'); loadGA();
-      });
-      decline?.addEventListener('click', () => {
-        localStorage.setItem('cookie-consent', 'denied');
-        banner.classList.add('hidden');
-      });
-      if (val === 'granted') loadGA();
-    })();
 
-    // fallback gtag so events don't error even if GA not loaded
-    window.gtag = window.gtag || function(){};
+    document.getElementById('translate').addEventListener('click', () => {
+      const you = document.getElementById('you').value;
+      const them = document.getElementById('them').value;
+      const msg = document.getElementById('msg').value;
 
-    // --- Signup ---
+      document.getElementById('tone').textContent = tones[them] || "—";
+      document.getElementById('output').textContent = rewriteFor(them, msg);
+    });
+
+    // --- Waitlist form -> /api/signup ---
     const form = document.getElementById('waitlist');
     const statusEl = document.getElementById('form-status');
-    const btn = document.getElementById('submit-btn');
-
-    function setStatus(msg) { statusEl.textContent = msg; }
-    function emailValid(v){ return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v); }
+    const joinBtn = document.getElementById('join');
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
-      setStatus('');
-      btn.disabled = true; btn.textContent = 'Sending…';
+      statusEl.textContent = "";
+      joinBtn.disabled = true; joinBtn.textContent = "Sending…";
 
-      const email = form.email.value.trim();
-      const reward = (new FormData(form)).get('reward');
+      const email = document.getElementById('email').value.trim();
       const consent = document.getElementById('consent').checked;
 
-      if (!emailValid(email)) { setStatus('❌ Please enter a valid email.'); btn.disabled = false; btn.textContent = 'Claim my reward'; return; }
-      if (!reward) { setStatus('❌ Choose a reward.'); btn.disabled = false; btn.textContent = 'Claim my reward'; return; }
-      if (!consent) { setStatus('❌ Please accept the consent checkbox.'); btn.disabled = false; btn.textContent = 'Claim my reward'; return; }
+      if (!email || !consent) {
+        statusEl.textContent = "Please enter a valid email and agree to updates.";
+        joinBtn.disabled = false; joinBtn.textContent = "Join waitlist";
+        return;
+      }
 
       try {
         const res = await fetch('/api/signup', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, reward })
+          body: JSON.stringify({ email, reward: 'waitlist' })
         });
-
         if (res.ok) {
-          setStatus('✅ Check your inbox for your reward!');
-          window.gtag('event', 'sign_up', { method: 'waitlist', reward });
+          statusEl.textContent = "✅ Thanks! Check your inbox.";
           form.reset();
         } else {
           const j = await res.json().catch(()=>({}));
+          statusEl.textContent = "❌ Could not send email. Try again.";
           console.error('Signup error', j);
-          setStatus('❌ Could not send email. Check your info and try again.');
         }
       } catch (err) {
         console.error(err);
-        setStatus('❌ Network error. Try again.');
+        statusEl.textContent = "❌ Network error. Try again.";
       } finally {
-        btn.disabled = false; btn.textContent = 'Claim my reward';
+        joinBtn.disabled = false; joinBtn.textContent = "Join waitlist";
       }
     });
   </script>
