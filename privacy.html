@@ -7,30 +7,39 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
-  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root { --bg:#0b0b0b; --card:#141414; --muted:#9aa0a6; --text:#fff; --border:#2a2a2a; --brand:#3A86FF; }
+    *{box-sizing:border-box} html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+    a{color:var(--brand);text-decoration:none} a:hover{text-decoration:underline}
+    .wrap{max-width:860px;margin:0 auto;padding:24px}
+    .back{color:#cfcfcf} .back:hover{color:#fff}
+    h1{font-size:28px;font-weight:800;margin:18px 0 6px} p{line-height:1.6}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px;margin-top:16px}
+    footer{margin-top:24px;color:var(--muted);font-size:12px}
+  </style>
 </head>
-<body class="bg-[#0f0f10] text-white font-[Inter]">
-  <main class="max-w-3xl mx-auto px-6 py-12">
-    <a href="./index.html" class="text-white/70 hover:text-white">&larr; Back to home</a>
-    <h1 class="text-3xl font-extrabold mt-6">Privacy Policy</h1>
-    <p class="text-white/70 mt-3">Last updated: <span id="date"></span></p>
+<body>
+  <main class="wrap">
+    <a class="back" href="/index.html">← Back to home</a>
+    <h1>Privacy Policy</h1>
+    <p class="muted" style="color:var(--muted);">Last updated: <span id="date"></span></p>
 
-    <section class="mt-8 space-y-4 text-white/90 leading-relaxed">
-      <p>
-        We collect your email address only when you join the waitlist, so we can send you rewards,
-        early access info, and updates about the Sygn Language app.
-      </p>
-      <p>
-        We do not sell your data. You can unsubscribe at any time using the link in our emails.
-        If you have questions or want your data deleted, email us at <a class="underline" href="mailto:hello@sygnlanguage.com">hello@sygnlanguage.com</a>.
-      </p>
-      <p>
-        We may use basic analytics to understand site performance. Cookies are optional and controlled by the banner on the home page.
+    <section class="card">
+      <p>We only collect what we need to run the waitlist and improve the product.</p>
+      <ul>
+        <li><b>Email address:</b> collected when you join the waitlist so we can send rewards, early access info, and product updates.</li>
+        <li><b>Basic analytics:</b> we may use privacy‑friendly analytics to understand page performance. Cookies (if used) are optional via the cookie banner on the home page.</li>
+      </ul>
+      <p>We don’t sell your data. You can unsubscribe at any time using the link in our emails.</p>
+      <p>We may use trusted vendors to deliver email (e.g., Resend). They process your email solely to send you messages from Sygn Language.</p>
+      <p>If you want your data deleted or have questions, email us at
+        <a href="mailto:hello@sygnlanguage.com">hello@sygnlanguage.com</a>.
       </p>
     </section>
 
-    <footer class="mt-12 text-xs text-white/50">
-      © <span id="year"></span> Sygn Language · <a class="underline" href="./terms.html">Terms</a>
+    <footer>
+      © <span id="year"></span> Sygn Language ·
+      <a href="/terms.html">Terms</a>
     </footer>
   </main>
 
